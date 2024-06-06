@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <h1 className={styles.title}>new proyect</h1>
+      <h1 className={styles.title}>Consulta de clima</h1>
       <div className={styles.container}>
         <Form />
         <p>2</p>

@@ -1,21 +1,39 @@
 import { useState } from "react"
 import { countries } from "../../data/countries"
 import styles from './Form.module.css'
+import Alert from "../Alert/Alert"
+import type { Request } from "../../types"
+import useWeather from "../../hooks/useWeather"
 
 const Form = () => {
 
-    const [request, setRequest] = useState({
+    const [request, setRequest] = useState<Request>({
         city: '',
         country: ''
     })
 
+    const [alert, setAlert] = useState('')
+
+    const { callAPI } = useWeather()
+
     const handleRequest = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         setRequest({ ...request, [e.target.name]: e.target.value })
     }
-    console.log(request);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (Object.values(request).includes('')) {
+            setAlert('Todos los campos son obligatorios')
+            return
+        }
+        callAPI(request.city, request.country)
+    }
 
     return (
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+            {
+                alert && <Alert alert={alert} />
+            }
             <div className={styles.field}>
                 <label htmlFor="city">Ciudad: </label>
                 <input
