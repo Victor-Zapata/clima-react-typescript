@@ -1,11 +1,17 @@
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { countries } from "../../data/countries"
 import styles from './Form.module.css'
 import Alert from "../Alert/Alert"
 import type { Request } from "../../types"
-import useWeather from "../../hooks/useWeather"
+import { Weather } from "../../hooks/useWeather"
 
-const Form = () => {
+type FormsProps = {
+    callAPI: (name: string, code: string) => Promise<void>
+    setWeather: Dispatch<SetStateAction<{ name: string; main: { temp: number; temp_max: number; temp_min: number; }; }>>
+    initialState: Weather
+}
+
+const Form = ({ callAPI, setWeather, initialState }: FormsProps) => {
 
     const [request, setRequest] = useState<Request>({
         city: '',
@@ -14,25 +20,30 @@ const Form = () => {
 
     const [alert, setAlert] = useState('')
 
-    const { callAPI } = useWeather()
-
     const handleRequest = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         setRequest({ ...request, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setWeather(initialState)
         if (Object.values(request).includes('')) {
             setAlert('Todos los campos son obligatorios')
             return
         }
         callAPI(request.city, request.country)
+        setTimeout(() => {
+            setRequest({
+                city: '',
+                country: ''
+            })
+        }, 1500);
     }
 
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             {
-                alert && <Alert alert={alert} />
+                alert && <Alert children={alert} />
             }
             <div className={styles.field}>
                 <label htmlFor="city">Ciudad: </label>

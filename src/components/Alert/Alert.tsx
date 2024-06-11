@@ -1,13 +1,10 @@
 
+import { ReactNode } from 'react'
 import styles from './Alert.module.css'
 
-export type AlertProps = {
-    alert: string
-}
-
-const Alert = ({ alert }: AlertProps) => {
+const Alert = ({ children }: { children: ReactNode }) => {
     return (
-        <div className={styles.alert}>{alert}</div>
+        <div className={styles.alert}>{children}</div>
     )
 }
 
